@@ -1,0 +1,4 @@
+torch==1.5.0
+tensorflow-gpu==2.1
+higher==0.2
+kornia==0.3.0
