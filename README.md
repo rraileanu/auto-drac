@@ -1,11 +1,20 @@
 # Auto-DrAC: Automatic Data-Regularized Actor-Critic
-
 This is a PyTorch implementation of the methods proposed in
 
 [**Automatic Data Augmentation for Generalization in Deep Reinforcement Learning**](https://arxiv.org/pdf/2006.12862.pdf) by 
 
 Roberta Raileanu, Max Goldstein, Denis Yarats, Ilya Kostrikov, and Rob Fergus.
 
+# Citation
+If you use this code in your own work, please cite our paper:
+```
+@article{raileanu2020automatic,
+  title={Automatic Data Augmentation for Generalization in Deep Reinforcement Learning},
+  author={Raileanu, Roberta and Goldstein, Max and Yarats, Denis and Kostrikov, Ilya and Fergus, Rob},
+  journal={arXiv preprint arXiv:2006.12862},
+  year={2020}
+}
+```
 
 # Requirements
 The code was run on a GPU with CUDA 10.2.
@@ -62,6 +71,10 @@ Test Results on Procgen
 Train Results on Procgen
 
 ![Procgen Train](/figures/train.png)
+
+# Agent Videos
+You can find some videos of the agent's behavior while training on our [website](https://sites.google.com/view/ucb-drac).
+
 
 # Acknowledgements
 This code was based on an open sourced [PyTorch implementation of PPO](https://github.com/ikostrikov/pytorch-a2c-ppo-acktr-gail).
