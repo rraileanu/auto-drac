@@ -78,12 +78,12 @@ parser.add_argument(
 parser.add_argument(
     '--log_interval',
     type=int,
-    default=10,
+    default=1,
     help='log interval, one log per n updates')
 parser.add_argument(
     '--save_interval',
     type=int,
-    default=100,
+    default=1,
     help='save interval, one save per n update')
 parser.add_argument(
     '--num_env_steps',
@@ -101,7 +101,11 @@ parser.add_argument(
     help='name for the run - prefix to log files')
 parser.add_argument(
     '--log_dir',
-    default='/tmp/drac/',
+    default='logs',
+    help='directory to save agent logs')
+parser.add_argument(
+    '--save_dir',
+    default='checkpoints',
     help='directory to save agent logs')
 parser.add_argument(
     '--no_cuda',
@@ -151,6 +155,11 @@ parser.add_argument(
     type=int, 
     default=12, 
     help='increase image size by')
+parser.add_argument(
+    '--preempt',
+    action='store_true',
+    default=False,
+    help='safe preemption: load the latest checkpoint with same args and continue training')
 
 # UCB-DrAC Arguments.
 parser.add_argument(

@@ -47,7 +47,6 @@ def train(args):
     device = torch.device("cuda:0" if args.cuda else "cpu")
 
     log_file = '-{}-{}-reproduce-s{}'.format(args.run_name, args.env_name, args.seed)
-    logger.configure(dir=args.log_dir, format_strs=['csv', 'stdout'], log_suffix=log_file)
 
     venv = ProcgenEnv(num_envs=args.num_processes, env_name=args.env_name, \
         num_levels=args.num_levels, start_level=args.start_level, \
@@ -171,6 +170,17 @@ def train(args):
             aug_coef=args.aug_coef,
             env_name=args.env_name)
 
+    checkpoint_path = os.path.join(args.save_dir, "agent" + log_file + ".pt")
+    if os.path.exists(checkpoint_path) and args.preempt:
+        checkpoint = torch.load(checkpoint_path)
+        agent.actor_critic.load_state_dict(checkpoint['model_state_dict'])
+        agent.optimizer.load_state_dict(checkpoint['optimizer_state_dict'])
+        init_epoch = checkpoint['epoch'] + 1
+        logger.configure(dir=args.log_dir, format_strs=['csv', 'stdout'], log_suffix=log_file + "-e%s" % init_epoch)
+    else:
+        init_epoch = 0
+        logger.configure(dir=args.log_dir, format_strs=['csv', 'stdout'], log_suffix=log_file)
+
     obs = envs.reset()
     rollouts.obs[0].copy_(obs)
     rollouts.to(device)
@@ -179,7 +189,7 @@ def train(args):
     num_updates = int(
         args.num_env_steps) // args.num_steps // args.num_processes
 
-    for j in range(num_updates):
+    for j in range(init_epoch, num_updates):
         actor_critic.train()
         for step in range(args.num_steps):
             # Sample actions
@@ -247,6 +257,19 @@ def train(args):
 
             logger.dumpkvs()
 
+        # Save Model
+        if (j > 0 and j % args.save_interval == 0
+                or j == num_updates - 1) and args.save_dir != "":
+            try:
+                os.makedirs(args.save_dir)
+            except OSError:
+                pass
+            
+            torch.save({
+                    'epoch': j,
+                    'model_state_dict': agent.actor_critic.state_dict(),
+                    'optimizer_state_dict': agent.optimizer.state_dict(),
+            }, os.path.join(args.save_dir, "agent" + log_file + ".pt")) 
 
 if __name__ == "__main__":
     args = parser.parse_args()
